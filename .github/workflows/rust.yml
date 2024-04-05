@@ -1,0 +1,39 @@
+name: Rust
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install TailwindCLI
+      run: curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.3/tailwindcss-linux-x64 && mv  tailwindcss-linux-x64  tailwindcss && chmod +x tailwindcss
+    
+    - name: Install trunk
+      run: cargo install trunk
+    
+    - name: Build
+      run: PATH=$PWD:$PATH trunk build --release --verbose
+
+    - name: Push generated webpage to another repository
+      uses: nkoppel/push-files-to-another-repository@1.1.0
+      env:
+        API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+      with:
+        source-files: 'dist/'
+        destination-username: 'pandecode'
+        destination-repository: 'pandecode.github.io'
+        commit-email: 'pandeshawnbenjamin@gmail.com'
+    
+    - name: Run tests
+      run: cargo test --verbose
