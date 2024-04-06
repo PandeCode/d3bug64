@@ -19,7 +19,7 @@ jobs:
       run: curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.3/tailwindcss-linux-x64 && mv  tailwindcss-linux-x64  tailwindcss && chmod +x tailwindcss
     
     - name: Install trunk
-      run: cargo install binstall && cargo binstall trunk -y
+      run: cargo install cargo-binstall && cargo binstall trunk -y
     
     - name: Build
       run: PATH=$PWD:$PATH $HOME/.cargo/bin/trunk build --release --verbose
