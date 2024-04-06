@@ -26,7 +26,7 @@ jobs:
               run: PATH=$PWD:$PATH trunk build --release --verbose
 
             - name: Push generated webpage to another repository
-              run: cd dist && git init -b main && git add . && git commit "Push from main repo" && git remote add origin https://${{ secrets.API_TOKEN_GITHUB }}@github.com/pandecode/pandecode.github.io  && git push --force
+              run: cd dist && git init -b main && git add . && git commit "Push from main repo" && git remote add origin https://${{ secrets.API_TOKEN_GITHUB }}@github.com/pandecode/pandecode.github.io  && git push origin --force
 
             - name: Run tests
               run: cargo test --verbose
