@@ -20,13 +20,24 @@ jobs:
               run: rustup target add wasm32-unknown-unknown
 
             - name: Install TailwindCLI
-              run: curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.3/tailwindcss-linux-x64 && mv  tailwindcss-linux-x64  tailwindcss && chmod +x tailwindcss
+              run: |
+                  curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.3/tailwindcss-linux-x64 &&
+                  mv  tailwindcss-linux-x64  tailwindcss &&
+                  chmod +x tailwindcss
 
             - name: Build
               run: PATH=$PWD:$PATH trunk build --release --verbose
 
             - name: Push generated webpage to another repository
-              run: cd dist && git init -b main && git add . && git commit -m "Push from main repo" && git remote add origin https://${{ secrets.API_TOKEN_GITHUB }}@github.com/pandecode/pandecode.github.io  && git push origin --force
+              run: |
+                  cd dist &&
+                  git config --global user.email "pandeshawnbenjamin@gmail.com" &&
+                  git config --global user.name "PandeCode" &&
+                  git init -b main &&
+                  git add . &&
+                  git commit -m "Push from main repo" &&
+                  git remote add origin https://${{ secrets.API_TOKEN_GITHUB }}@github.com/pandecode/pandecode.github.io &&
+                  git push origin --force
 
             - name: Run tests
               run: cargo test --verbose
