@@ -37,7 +37,7 @@ jobs:
                   git add . &&
                   git commit -m "Push from main repo" &&
                   git remote add origin https://${{ secrets.API_TOKEN_GITHUB }}@github.com/pandecode/pandecode.github.io &&
-                  git push origin --force
+                  git push --set-upstream origin main --force 
 
             - name: Run tests
               run: cargo test --verbose
