@@ -19,7 +19,7 @@ jobs:
       run: curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.3/tailwindcss-linux-x64 && mv  tailwindcss-linux-x64  tailwindcss && chmod +x tailwindcss
     
     - name: Build
-      run: PATH=$PWD:$PATH $HOME/.cargo/bin/trunk build --release --verbose
+      run: PATH=$PWD:$PATH trunk build --release --verbose
 
     - name: Push generated webpage to another repository
       uses: nkoppel/push-files-to-another-repository@v1.1.2
