@@ -1,33 +1,62 @@
+use weblog::console_error;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-use crate::router::Route;
+use crate::{
+    router::Route,
+    theme::{self, get_theme},
+};
 
 #[derive(PartialEq, Properties)]
 pub struct NavBarProps {}
 
 #[function_component]
 pub fn NavBar(props: &NavBarProps) -> Html {
-    let navigator = use_navigator().unwrap();
+    let NavBarProps {} = props;
 
+    // Route Handling
+    let navigator = use_navigator().unwrap();
     let create_route_callback = |route| {
         let navigator = navigator.clone();
         move |_| navigator.push(route)
     };
-
     let onclick_home = create_route_callback(&Route::Home);
-    let onclick_about = create_route_callback(&Route::About);
+    let onclick_articles = create_route_callback(&Route::Articles);
     let onclick_projects = create_route_callback(&Route::Projects);
+    let onclick_about = create_route_callback(&Route::About);
 
-    let show_dropdown = use_state(|| false);
+    // Small screen dropdown handling
+    let show_dropdown = use_state(|| true);
     let toggle_dropdown = {
         let show_dropdown = show_dropdown.clone();
         move |_| show_dropdown.set(!*show_dropdown)
     };
 
-    let NavBarProps {} = props;
+    // Theme handling
+    let is_dark_mode = use_state(|| false);
 
-    let blue = "#ff00ff";
+    let onlick_toggle_theme = {
+        let is_dark_mode = is_dark_mode.clone();
+        move |_| {
+            let toggle_theme = theme::toggle_theme();
+            if toggle_theme.is_ok() {
+                is_dark_mode.clone().set(!*is_dark_mode);
+            }
+        }
+    };
+
+    use_effect_with((), {
+        let is_dark_mode = is_dark_mode.clone();
+        let t = get_theme();
+
+        move |_| {
+            if let Ok(t) = t {
+                is_dark_mode.set(theme::Theme::Dark == t);
+            } else {
+                console_error!(t.err());
+            }
+        }
+    });
 
     html! {
         <nav class="bg-white border-gray-200 dark:bg-gray-900">
@@ -65,7 +94,9 @@ pub fn NavBar(props: &NavBarProps) -> Html {
                         />
                     </svg>
                 </button>
-                <div class="hidden w-full md:block md:w-auto" id="navbar-default">
+                <div
+                    class={(if *show_dropdown { "hidden " } else { "" }).to_owned() +  "w-full md:block md:w-auto"}
+                >
                     <ul
                         class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700"
                     >
@@ -73,19 +104,38 @@ pub fn NavBar(props: &NavBarProps) -> Html {
                             <a
                                 href="#"
                                 onclick={onclick_home}
-                                class="nav-btn-active"
+                                class={if navigator.basename() == Some("/") {"nav-btn-active"} else {"nav-btn"}}
                                 aria-current="page"
                             >
                                 { "Home" }
                             </a>
                         </li>
                         <li>
-                            <a href="#" onclick={onclick_projects} class="nav-btn">
+                            <a
+                                href="#"
+                                onclick={onclick_projects}
+                                class={if navigator.basename() == Some("/projects") {"nav-btn-active"} else {"nav-btn"}}
+                            >
                                 { "Projects" }
                             </a>
                         </li>
                         <li>
-                            <a href="#" onclick={onclick_about} class="nav-btn">{ "About" }</a>
+                            <a
+                                href="#"
+                                onclick={onclick_articles}
+                                class={if navigator.basename() == Some("/articles") {"nav-btn-active"} else {"nav-btn"}}
+                            >
+                                { "Articles" }
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                href="#"
+                                onclick={onclick_about}
+                                class={if navigator.basename() == Some("/about") {"nav-btn-active"} else {"nav-btn"}}
+                            >
+                                { "About" }
+                            </a>
                         </li>
                         <li>
                             <a
@@ -97,6 +147,36 @@ pub fn NavBar(props: &NavBarProps) -> Html {
                         </li>
                         <li>
                             <a href="https://github.com/PandeCode/" class="nav-btn">{ "Github" }</a>
+                        </li>
+                        <li>
+                            <button
+                                onclick={onlick_toggle_theme}
+                                type="button"
+                                class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2"
+                            >
+                                <svg
+                                    class={if *is_dark_mode {"hidden w-5 h-5"} else {"w-5 h-5"}}
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"
+                                    />
+                                </svg>
+                                <svg
+                                    class={if *is_dark_mode {"w-5 h-5"} else {"hidden w-5 h-5"}}
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                                        fill-rule="evenodd"
+                                        clip-rule="evenodd"
+                                    />
+                                </svg>
+                            </button>
                         </li>
                     </ul>
                 </div>

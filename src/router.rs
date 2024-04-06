@@ -3,6 +3,7 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::about::About;
+use crate::components::articles::Articles;
 use crate::components::home::Home;
 use crate::components::not_found::NotFound;
 use crate::components::projects::Projects;
@@ -15,6 +16,8 @@ pub enum Route {
     About,
     #[at("/projects")]
     Projects,
+    #[at("/articles")]
+    Articles,
     #[not_found]
     #[at("/404")]
     NotFound,
@@ -23,6 +26,7 @@ pub enum Route {
 pub fn switch(routes: Route) -> Html {
     match routes {
         Route::Home => html! { <Home /> },
+        Route::Articles => html! { <Articles /> },
         Route::About => html! { <About /> },
         Route::Projects => html! { <Projects /> },
         Route::NotFound => html! { <NotFound /> },

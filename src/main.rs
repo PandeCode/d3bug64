@@ -1,7 +1,8 @@
 mod components;
 mod router;
+mod theme;
 
-use weblog::console_log;
+use weblog::{console_error, console_log};
 use yew::prelude::*;
 use yew_router::prelude::*;
 
@@ -9,6 +10,13 @@ use components::nav_bar::NavBar;
 
 #[function_component(App)]
 fn app() -> Html {
+    use_effect(|| {
+        let res = theme::setup_theme();
+        if res.is_err() {
+            console_error!(res.err());
+        }
+    });
+
     html! {
         <BrowserRouter>
             <NavBar />
@@ -17,6 +25,5 @@ fn app() -> Html {
     }
 }
 fn main() {
-    console_log!("Hello world!");
     yew::Renderer::<App>::new().render();
 }

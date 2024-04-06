@@ -98,9 +98,11 @@ name = "d3bug64"
 version = "0.1.0"
 dependencies = [
  "gloo-net 0.5.0",
+ "gloo-timers 0.3.0",
  "serde",
  "wasm-bindgen",
  "wasm-bindgen-futures",
+ "web-sys",
  "weblog",
  "yew",
  "yew-router",
