@@ -5,6 +5,6 @@ pub struct ArticlesProps {}
 
 #[function_component]
 pub fn Articles(props: &ArticlesProps) -> Html {
-    let ArticlesProps {} = props;
-    html! { <div class="">{ "Articles" }</div> }
+	let ArticlesProps {} = props;
+	html! { <div class="">{ "Articles" }</div> }
 }
