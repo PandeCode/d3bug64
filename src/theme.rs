@@ -7,6 +7,7 @@ pub enum Theme {
 	Dark,
 	Light,
 }
+
 fn get_theme_match_media() -> Result<Theme, JsValue> {
 	if let Some(window) = window() {
 		if let Some(media_matches) = window.match_media("(prefers-color-scheme: dark)")? {
@@ -63,9 +64,11 @@ pub fn setup_theme() -> Result<(), JsValue> {
 					match theme {
 						Some(Theme::Dark) => {
 							cl.add_1("dark")?;
+							console_error!("dark-mode");
 						},
 						Some(Theme::Light) => {
 							cl.remove_1("dark")?;
+							console_error!("light-mode");
 						},
 						None => console_error!("Unable to get match media for 'color-theme'."),
 					}

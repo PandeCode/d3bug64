@@ -10,8 +10,8 @@ use crate::{
 #[derive(PartialEq, Properties)]
 pub struct NavBarProps {}
 
-#[function_component]
-pub fn NavBar(props: &NavBarProps) -> Html {
+#[function_component(NavBar)]
+pub fn nav_bar(props: &NavBarProps) -> Html {
 	let NavBarProps {} = props;
 
 	// Route Handling
@@ -34,13 +34,12 @@ pub fn NavBar(props: &NavBarProps) -> Html {
 
 	// Theme handling
 	let is_dark_mode = use_state(|| false);
-
-	let onlick_toggle_theme = {
+	let toggle_theme = {
 		let is_dark_mode = is_dark_mode.clone();
 		move |_| {
-			let toggle_theme = theme::toggle_theme();
-			if toggle_theme.is_ok() {
-				is_dark_mode.clone().set(!*is_dark_mode);
+			let toggle_result = theme::toggle_theme();
+			if toggle_result.is_ok() {
+				is_dark_mode.set(!*is_dark_mode);
 			}
 		}
 	};
@@ -145,7 +144,7 @@ pub fn NavBar(props: &NavBarProps) -> Html {
 						</li>
 						<li>
 							<button
-								onclick={onlick_toggle_theme}
+								onclick={toggle_theme}
 								type="button"
 								class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2"
 							>
