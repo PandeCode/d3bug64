@@ -96,92 +96,92 @@ pub fn Home(props: &HomeProps) -> Html {
 		let langs = project.2.clone();
 
 		html! {
-    <div class="bg-white p-6 rounded-lg shadow-lg">
-        <h3 class="text-xl font-semibold text-gray-800">{ name.clone() }</h3>
-        <p class="text-gray-600 mt-2">{ desc }</p>
-        <p class="text-gray-600 mt-2">
-            { {
+			<div class="bg-white p-6 rounded-lg shadow-lg">
+				<h3 class="text-xl font-semibold text-gray-800">{ name.clone() }</h3>
+				<p class="text-gray-600 mt-2">{ desc }</p>
+				<p class="text-gray-600 mt-2">
+					{ {
 
-		if let Some(langs) = langs
-		{ html! {for langs.iter().map(|l|  html!{{l}}) }} else {
-		html! { {"Abb"} }
+				if let Some(langs) = langs
+				{ html! {for langs.iter().map(|l|  html!{{l}}) }} else {
+				html! { {"Abb"} }
 
+				}
+
+				} }
+				</p>
+				<button
+					class="text-blue-500 hover:underline mt-4 block"
+					onclick={move |_| { set_href(gh_repo_url(ACC.to_string(), name.clone())); }}
+				>
+					{ "View Project" }
+				</button>
+			</div>
 		}
-
-		} }
-        </p>
-        <button
-            class="text-blue-500 hover:underline mt-4 block"
-            onclick={move |_| { set_href(gh_repo_url(ACC.to_string(), name.clone())); }}
-        >
-            { "View Project" }
-        </button>
-    </div>
-}
 	});
 
 	// Render component HTML with Tailwind styling and SVG icons
 	html! {
-    <div class="flex flex-col items-center p-8 bg-gray-100 min-h-screen">
-        // Introduction Section
-        <div class="bg-white p-10 rounded-lg shadow-md text-center max-w-lg mb-8">
-            <h2 class="text-5xl font-bold text-blue-600">{ "Shawn Pande" }</h2>
-            <p class="text-gray-700 text-xl mt-4 leading-relaxed">
-                { "A passionate developer with expertise in Rust, C++, and web technologies. I enjoy building full-stack applications and optimizing performance through efficient coding practices." }
-            </p>
-        </div>
-        // Skills Section
-        <h1 class="text-3xl font-bold mb-6 text-gray-800">{ "My Skills" }</h1>
-        <div class="grid grid-cols-2 gap-6 mb-10">
-            { for skills.iter().map(|(skill, icon)| {
-						html! {
-							<div class="flex flex-col items-center bg-white p-6 rounded-lg shadow-lg transform hover:scale-105 transition duration-300">
-								<img src={icon.clone()} alt={*skill} class="w-12 h-12 mb-4" />
-								<span class="text-lg font-semibold text-gray-700">{ skill }</span>
-							</div>
-						}
-					}) }
-        </div>
-        // Projects Section
-        <h2 class="text-2xl font-bold mt-10 mb-4 text-gray-800">{ "Projects" }</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-            { if *projects_loading {
-						html! { <div class="text-gray-600">{"Loading projects..."}</div> }
-					} else {
-						html! {
-							<>
-								{ for projects_section }
-							</>
-						}
-					} }
-        </div>
-        // Experience Section
-        <h2 class="text-2xl font-bold mt-10 mb-4 text-gray-800">{ "Experience" }</h2>
-        <div class="bg-white p-6 rounded-lg shadow-lg mb-10">
-            <h3 class="text-xl font-semibold text-gray-800">{ "Job Title at Company" }</h3>
-            <p class="text-gray-600 mt-2">{ "Description of your role and contributions." }</p>
-            <p class="text-gray-500 text-sm">{ "Dates of Employment" }</p>
-        </div>
-        // Education Section
-        <h2 class="text-2xl font-bold mt-10 mb-4 text-gray-800">{ "Education" }</h2>
-        <div class="bg-white p-6 rounded-lg shadow-lg mb-10">
-            <h3 class="text-xl font-semibold text-gray-800">{ "Degree, Major at University" }</h3>
-            <p class="text-gray-500 text-sm">{ "Graduation Year" }</p>
-        </div>
-        // Testimonials Section
-        <h2 class="text-2xl font-bold mt-10 mb-4 text-gray-800">{ "Testimonials" }</h2>
-        <blockquote class="bg-gray-200 p-4 rounded-lg mb-10">
-            <p class="text-gray-700 italic">
-                { "Shawn is a dedicated developer with a keen eye for detail." }
-            </p>
-            <footer class="mt-2 text-gray-500">{ "— Person Name, Position" }</footer>
-        </blockquote>
-        // Contact Information
-        <h2 class="text-2xl font-bold mt-10 mb-4 text-gray-800">{ "Contact Me" }</h2>
-        <p class="text-gray-700">{ "Feel free to reach out!" }</p>
-        <a href="mailto:your-email@example.com" class="text-blue-500 hover:underline">
-            { "your-email@example.com" }
-        </a>
-    </div>
-}
+		<div class="flex flex-col items-center p-8 bg-gray-100 min-h-screen">
+			// Introduction Section
+			<div class="bg-white p-10 rounded-lg shadow-md text-center max-w-lg mb-8">
+				<h2 class="text-5xl font-bold text-blue-600">{ "Shawn Pande" }</h2>
+				<p class="text-gray-700 text-xl mt-4 leading-relaxed">
+					{ "A passionate developer with expertise in Rust, C++, and web technologies. I enjoy building full-stack applications and optimizing performance through efficient coding practices." }
+				</p>
+			</div>
+			// Skills Section
+			<h1 class="text-3xl font-bold mb-6 text-gray-800">{ "My Skills" }</h1>
+			<div class="grid grid-cols-2 gap-6 mb-10">
+				{ for skills.iter().map(|(skill, icon)| {
+							html! {
+								<div class="flex flex-col items-center bg-white p-6 rounded-lg shadow-lg transform hover:scale-105 transition duration-300">
+									<img src={icon.clone()} alt={*skill} class="w-12 h-12 mb-4" />
+									<span class="text-lg font-semibold text-gray-700">{ skill }</span>
+								</div>
+							}
+						}) }
+			</div>
+			// Projects Section
+			<h2 class="text-2xl font-bold mt-10 mb-4 text-gray-800">{ "Projects" }</h2>
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+				{ if *projects_loading {
+							html! { <div class="text-gray-600">{"Loading projects..."}</div> }
+						} else {
+							html! {
+								<>
+									{ for projects_section }
+								</>
+							}
+						} }
+			</div>
+			// Experience Section
+			<h2 class="text-2xl font-bold mt-10 mb-4 text-gray-800">{ "Experience" }</h2>
+			<div class="bg-white p-6 rounded-lg shadow-lg mb-10">
+				<h3 class="text-xl font-semibold text-gray-800">{ "Job Title at Company" }</h3>
+				<p class="text-gray-600 mt-2">{ "Description of your role and contributions." }</p>
+				<p class="text-gray-500 text-sm">{ "Dates of Employment" }</p>
+			</div>
+			// Education Section
+			<h2 class="text-2xl font-bold mt-10 mb-4 text-gray-800">{ "Education" }</h2>
+			<div class="bg-white p-6 rounded-lg shadow-lg mb-10">
+				<h3 class="text-xl font-semibold text-gray-800">{ "Degree, Major at University" }</h3>
+				<p class="text-gray-500 text-sm">{ "Graduation Year" }</p>
+			</div>
+			// Testimonials Section
+			<h2 class="text-2xl font-bold mt-10 mb-4 text-gray-800">{ "Testimonials" }</h2>
+			<blockquote class="bg-gray-200 p-4 rounded-lg mb-10">
+				<p class="text-gray-700 italic">
+					{ "Shawn is a dedicated developer with a keen eye for detail." }
+				</p>
+				<footer class="mt-2 text-gray-500">{ "— Person Name, Position" }</footer>
+			</blockquote>
+			// Contact Information
+			<h2 class="text-2xl font-bold mt-10 mb-4 text-gray-800">{ "Contact Me" }</h2>
+			<p class="text-gray-700">{ "Feel free to reach out!" }</p>
+			<a href="mailto:your-email@example.com" class="text-blue-500 hover:underline">
+				{ "your-email@example.com" }
+			</a>
+		</div>
+	}
 }

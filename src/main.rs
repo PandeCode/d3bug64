@@ -21,11 +21,11 @@ fn app() -> Html {
 	});
 
 	html! {
-    <BrowserRouter>
-        <NavBar />
-        <Switch<router::Route> render={router::switch} />
-    </BrowserRouter>
-}
+		<BrowserRouter>
+			<NavBar />
+			<Switch<router::Route> render={router::switch} />
+		</BrowserRouter>
+	}
 }
 fn main() {
 	yew::Renderer::<App>::new().render();
