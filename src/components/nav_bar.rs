@@ -7,6 +7,8 @@ use crate::{
 	theme::{self, get_theme},
 };
 
+use crate::utils::svg_asset;
+
 #[derive(PartialEq, Properties)]
 pub struct NavBarProps {}
 
@@ -14,6 +16,7 @@ pub struct NavBarProps {}
 pub fn nav_bar(props: &NavBarProps) -> Html {
 	let NavBarProps {} = props;
 
+	/*
 	// Route Handling
 	let navigator = use_navigator().unwrap();
 	let create_route_callback = |route| {
@@ -24,6 +27,7 @@ pub fn nav_bar(props: &NavBarProps) -> Html {
 	let onclick_articles = create_route_callback(&Route::Articles);
 	let onclick_projects = create_route_callback(&Route::Projects);
 	let onclick_about = create_route_callback(&Route::About);
+	*/
 
 	// Small screen dropdown handling
 	let show_dropdown = use_state(|| true);
@@ -97,50 +101,58 @@ pub fn nav_bar(props: &NavBarProps) -> Html {
 					<ul
 						class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700"
 					>
-						<li>
-							<a
-								href="#"
-								onclick={onclick_home}
-								class={if navigator.basename() == Some("/") {"nav-btn-active"} else {"nav-btn"}}
-								aria-current="page"
-							>
-								{ "Home" }
-							</a>
-						</li>
-						<li>
-							<a
-								href="#"
-								onclick={onclick_projects}
-								class={if navigator.basename() == Some("/projects") {"nav-btn-active"} else {"nav-btn"}}
-							>
-								{ "Projects" }
-							</a>
-						</li>
-						<li>
-							<a
-								href="#"
-								onclick={onclick_articles}
-								class={if navigator.basename() == Some("/articles") {"nav-btn-active"} else {"nav-btn"}}
-							>
-								{ "Articles" }
-							</a>
-						</li>
-						<li>
-							<a
-								href="#"
-								onclick={onclick_about}
-								class={if navigator.basename() == Some("/about") {"nav-btn-active"} else {"nav-btn"}}
-							>
-								{ "About" }
-							</a>
-						</li>
+						/*
+	<li>
+		<a
+			href="#"
+			onclick={onclick_home}
+			class={if navigator.basename() == Some("/") {"nav-btn-active"} else {"nav-btn"}}
+			aria-current="page"
+		>
+			{ "Home" }
+		</a>
+	</li>
+	<li>
+		<a
+			href="#"
+			onclick={onclick_projects}
+			class={if navigator.basename() == Some("/projects") {"nav-btn-active"} else {"nav-btn"}}
+		>
+			{ "Projects" }
+		</a>
+	</li>
+	<li>
+		<a
+			href="#"
+			onclick={onclick_articles}
+			class={if navigator.basename() == Some("/articles") {"nav-btn-active"} else {"nav-btn"}}
+		>
+			{ "Articles" }
+		</a>
+	</li>
+	<li>
+		<a
+			href="#"
+			onclick={onclick_about}
+			class={if navigator.basename() == Some("/about") {"nav-btn-active"} else {"nav-btn"}}
+		>
+			{ "About" }
+		</a>
+	</li>
+	*/
 						<li>
 							<a href="https://ug.linkedin.com/in/shawn-pande-45a79b19b" class="nav-btn">
-								{ "LinkedIn" }
+
+
+						<img src={svg_asset("linkedin")} alt={ "LinkedIn"} class="w-7 h-7 mb-4 rounded-full shadow-lg transform transition-transform duration-200 hover:scale-110" />
 							</a>
 						</li>
 						<li>
-							<a href="https://github.com/PandeCode/" class="nav-btn">{ "Github" }</a>
+							<a href="https://github.com/PandeCode/" class="nav-btn">
+
+						<img src={svg_asset("github")} alt={"Github"} class="w-7 h-7 mb-4 rounded-full shadow-lg transform transition-transform duration-200 hover:scale-110" />
+	</a>
+
 						</li>
 						<li>
 							<button

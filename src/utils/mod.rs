@@ -36,3 +36,7 @@ pub fn language_color(lang: &str) -> &'static str {
 		_ => "#000000", // Default color if not found
 	}
 }
+
+pub fn svg_asset(f: &str) -> String {
+	format!("assets/svgs/{}.svg", f)
+}

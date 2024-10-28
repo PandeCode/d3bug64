@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use yew::prelude::*;
 
 use crate::utils;
-use crate::utils::{gh_repo_url, language_color};
+use crate::utils::{gh_repo_url, language_color, svg_asset};
 
 // Define component properties
 #[derive(PartialEq, Properties)]
@@ -15,19 +15,43 @@ const ACC: &str = "pandecode";
 pub fn Home(props: &HomeProps) -> Html {
 	let HomeProps {} = props;
 
-	let svg_asset = |f: &str| format!("assets/svgs/{}.svg", f);
+	let description = html! {
+		<>
+			{"A developer with a knack for overcomplicating simple projects and a passion for hacking together quirky, sometimes unnecessary tools. Embraces challenges that transform mundane tasks into meticulously crafted systems. For example, this very page could've been a quick HTML mock-up, but instead, it's a full-blown Rust and WebAssembly experience."}
+		</>
+	};
+
+	let _misc = [
+		"https://raw.githubusercontent.com/PandeCode/PandeCode/main/assets/bar_graph.png",
+		"https://github-readme-stats.vercel.app/api/top-langs/?username=PandeCode&layout=compact&theme=dracula&hide_border=true)](https://github.com/anuraghazra/github-readme-stats",
+		"https://github-readme-stats.vercel.app/api?username=PandeCode&theme=dracula&hide_border=true&show_icons=true"
+	];
+
+	let _file_to_parse =
+		"https://raw.githubusercontent.com/PandeCode/PandeCode/refs/heads/main/README.md";
 
 	// Define skills with their corresponding SVG file paths
 	let skills = [
 		("Rust", svg_asset("rust")),
-		("Fullstack", svg_asset("web")),
-		("C++", svg_asset("terminal")),
+		("C/C++", svg_asset("cpp")),
 		("Python", svg_asset("python")),
+		("Bash Scripting", svg_asset("bash")),
 		("Linux", svg_asset("linux")),
+		("Graphics", svg_asset("graphics")),
+		("Neovim", svg_asset("neovim")),
+		("Full-Stack Dev", svg_asset("web")),
+		("Git & Version Control", svg_asset("git")),
 	];
 
 	// State for holding projects
-	let projects = use_state(|| Vec::<(String, String, Option<HashMap<String, u64>>)>::new());
+	let projects = use_state(|| {
+		Vec::<(
+			String,
+			String,
+			Option<Vec<String>>,
+			Option<HashMap<String, u64>>,
+		)>::new()
+	});
 	let projects_loading = use_state(|| true);
 
 	{
@@ -48,6 +72,7 @@ pub fn Home(props: &HomeProps) -> Html {
 									repo.name.clone(),
 									repo.description.clone().unwrap_or(repo.name.clone()),
 									None,
+									None,
 								)
 							})
 							.collect(),
@@ -55,8 +80,8 @@ pub fn Home(props: &HomeProps) -> Html {
 					projects_loading.set(false);
 				}
 			})
-		})
-	};
+		});
+	}
 
 	{
 		let projects = projects.clone();
@@ -71,11 +96,18 @@ pub fn Home(props: &HomeProps) -> Html {
 					let mut projects_value = (*projects).clone();
 
 					for (i, project) in (*projects).iter().enumerate() {
-						if let Some(langs) =
-							utils::gh::get_langs(ACC.to_string(), project.0.clone()).await
-						{
-							projects_value[i] = (project.0.clone(), project.1.clone(), Some(langs));
-							projects.set(projects_value.clone());
+						if let Some(topics) = utils::gh::get_topics(ACC, &project.0.clone()).await {
+							if let Some(langs) =
+								utils::gh::get_langs(ACC.to_string(), project.0.clone()).await
+							{
+								projects_value[i] = (
+									project.0.clone(),
+									project.1.clone(),
+									Some(topics),
+									Some(langs),
+								);
+								projects.set(projects_value.clone());
+							}
 						}
 					}
 				}
@@ -83,15 +115,41 @@ pub fn Home(props: &HomeProps) -> Html {
 		});
 	}
 
+	let wait_html = html! {
+		<div class="flex gap-2">
+			{ for (0..3).map(|_| html! {
+				<div class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full w-24 h-6 animate-pulse"></div>
+			}) }
+		</div>
+	};
+
 	let projects_section = projects.iter().map(|project| {
 		let name = project.0.clone();
 		let desc = project.1.clone();
-		let langs = project.2.clone();
+		let topics = project.2.clone();
+		let langs = project.3.clone();
 
 		html! {
-			<div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+			<div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg transition-transform duration-300 hover:shadow-2xl hover:scale-101">
 				<h3 class="text-xl font-semibold text-gray-800 dark:text-white">{ name.clone() }</h3>
 				<p class="text-gray-600 dark:text-gray-300 mt-2">{ desc }</p>
+
+				<div class="flex flex-wrap gap-2 mt-2">
+					{
+						if let Some(topics) = topics {
+							html! {
+								for topics.iter().map(|topic| html! {
+									<span class="px-3 py-1 bg-green-500 text-white rounded-full text-sm font-semibold transform wobble transition-all duration-200 hover:scale-110">
+										{ topic }
+									</span>
+								})
+							}
+						} else {
+							wait_html.clone()
+						}
+					}
+				</div>
+
 				<div class="flex flex-wrap gap-2 mt-2">
 					{
 						if let Some(langs) = langs {
@@ -111,16 +169,11 @@ pub fn Home(props: &HomeProps) -> Html {
 								})
 							}
 						} else {
-							html! {
-								<div class="flex gap-2">
-									{ for (0..3).map(|_| html! {
-										<div class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full w-24 h-6 animate-pulse"></div>
-									}) }
-								</div>
-							}
+							wait_html.clone()
 						}
 					}
 				</div>
+
 				<a
 					class="text-blue-500 hover:underline mt-4 block dark:text-blue-400"
 					href={gh_repo_url(ACC.to_string(), name.clone())}
@@ -131,22 +184,7 @@ pub fn Home(props: &HomeProps) -> Html {
 		}
 	});
 
-	// Render component HTML with Tailwind styling and SVG icons
-	html! {
-			<div class="flex flex-col items-center p-8 bg-gray-100 dark:bg-gray-900 min-h-screen">
-				// Introduction Section
-				<div class="bg-white dark:bg-gray-800 p-10 rounded-lg shadow-md text-center mb-8 max-width">
-					<h2 class="text-5xl font-bold text-blue-600 dark:text-blue-400">{ "Shawn Pande" }</h2>
-					<p class="text-gray-700 dark:text-gray-300 text-xl mt-4 leading-relaxed">
-						{ "A passionate developer with expertise in Rust, C++, and web technologies. I enjoy building full-stack applications and optimizing performance through efficient coding practices." }
-					</p>
-				</div>
-
-
-		// Skills Section
-	<h1 class="text-4xl font-bold mb-8 text-gray-800 dark:text-gray-100 text-center">{ "My Skills" }</h1>
-	<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10 mb-12 max-w-6xl mx-auto">
-		{ for skills.iter().map(|(skill, icon)| {
+	let skills_cards = skills.iter().map(|(skill, icon)| {
 			html! {
 				<div class="flex flex-col items-center bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg transform hover:scale-105 transition duration-300 border border-gray-200 dark:border-gray-700">
 					<div class="relative mb-6">
@@ -156,72 +194,51 @@ pub fn Home(props: &HomeProps) -> Html {
 					<span class="text-xl font-semibold text-gray-700 dark:text-gray-300 text-center">{ skill }</span>
 				</div>
 			}
-		}) }
-	</div>
+		});
 
-
-
-				// Projects Section
-				<h2 class="text-2xl font-bold mt-10 mb-4 text-gray-800 dark:text-gray-100">{ "Projects" }</h2>
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-					{
-						if *projects_loading {
-							// Render loading skeletons as placeholders
-							html! {
-								for (0..2).map(|_| html! {
-									<div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg animate-pulse">
-										<div class="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4"></div>
-										<div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mb-2"></div>
-										<div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6 mb-4"></div>
-										<div class="flex gap-2 mt-2">
-											{ for (0..3).map(|_| html! {
-												<span class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full w-16 h-6"></span>
-											}) }
-										</div>
-										<div class="h-4 bg-blue-200 dark:bg-blue-700 rounded w-1/3 mt-6"></div>
-									</div>
-								})
-							}
-						} else {
-							html! {
-								<>
-									{ for projects_section }
-								</>
-							}
-						}
-					}
-				</div>
-
-				// Experience Section
-				<h2 class="text-2xl font-bold mt-10 mb-4 text-gray-800 dark:text-gray-100">{ "Experience" }</h2>
-				<div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg mb-10">
-					<h3 class="text-xl font-semibold text-gray-800 dark:text-white">{ "Job Title at Company" }</h3>
-					<p class="text-gray-600 dark:text-gray-300 mt-2">{ "Description of your role and contributions." }</p>
-					<p class="text-gray-500 dark:text-gray-400 text-sm">{ "Dates of Employment" }</p>
-				</div>
-
-				// Education Section
-				<h2 class="text-2xl font-bold mt-10 mb-4 text-gray-800 dark:text-gray-100">{ "Education" }</h2>
-				<div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg mb-10">
-					<h3 class="text-xl font-semibold text-gray-800 dark:text-white">{ "Degree, Major at University" }</h3>
-					<p class="text-gray-500 dark:text-gray-400 text-sm">{ "Graduation Year" }</p>
-				</div>
-
-				// Testimonials Section
-				<h2 class="text-2xl font-bold mt-10 mb-4 text-gray-800 dark:text-gray-100">{ "Testimonials" }</h2>
-				<blockquote class="bg-gray-200 dark:bg-gray-700 p-4 rounded-lg mb-10">
-					<p class="text-gray-700 dark:text-gray-300 italic">
-						{ "Shawn is a dedicated developer with a keen eye for detail." }
-					</p>
-					<footer class="mt-2 text-gray-500 dark:text-gray-400">{ "— Person Name, Position" }</footer>
-				</blockquote>
-
-				// Contact Information
-				<h2 class="text-2xl font-bold mt-10 mb-4 text-gray-800 dark:text-gray-100">{ "Contact Me" }</h2>
-				<p class="text-gray-700 dark:text-gray-300">{ "Feel free to reach out!" }</p>
-				<a href="mailto:your-email@example.com" class="text-blue-500 hover:underline dark:text-blue-400">
-					{ "your-email@example.com" }
-				</a>
+	// Render component HTML with Tailwind styling and SVG icons
+	html! {
+		<div class="flex flex-col items-center p-8 bg-gradient-to-r from-blue-100 to-purple-200 dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-900 min-h-screen">
+			// Introduction Section
+			<div class="bg-white dark:bg-gray-800 p-10 rounded-lg shadow-md text-center mb-8 max-width fade-in-up">
+				<h2 class="text-5xl font-bold text-blue-600 dark:text-blue-400">{ "Shawn Pande" }</h2>
+				<p class="text-gray-700 dark:text-gray-300 text-xl mt-4 leading-relaxed">
+					{ description }
+				</p>
 			</div>
-		}
+
+			// Skills Section
+			<h1 class="text-4xl font-bold mb-8 text-gray-800 dark:text-gray-100 text-center">{ "Skills" }</h1>
+			<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10 mb-12 max-w-10xl mx-auto">
+				{ for skills_cards }
+			</div>
+
+			// Projects Section
+			<h2 class="text-2xl font-bold mt-10 mb-4 text-gray-800 dark:text-gray-100">{ "Projects" }</h2>
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+				{
+					if *projects_loading {
+						// Render loading skeletons as placeholders
+						html! {
+							for (0..2).map(|_| html! {
+								<div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg animate-pulse">
+									<div class="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4"></div>
+									<div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mb-2"></div>
+									<div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6 mb-4"></div>
+									<div class="flex gap-2 mt-2">
+										{ for (0..3).map(|_| html! {
+											<span class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full w-16 h-6"></span>
+										}) }
+									</div>
+									<div class="h-4 bg-blue-200 dark:bg-gray-700 rounded w-1/2 mt-4"></div>
+								</div>
+							})
+						}
+					} else {
+						html!{ for projects_section }
+					}
+				}
+			</div>
+		</div>
+	}
 }

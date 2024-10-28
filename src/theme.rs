@@ -64,11 +64,9 @@ pub fn setup_theme() -> Result<(), JsValue> {
 					match theme {
 						Some(Theme::Dark) => {
 							cl.add_1("dark")?;
-							console_error!("dark-mode");
 						},
 						Some(Theme::Light) => {
 							cl.remove_1("dark")?;
-							console_error!("light-mode");
 						},
 						None => console_error!("Unable to get match media for 'color-theme'."),
 					}

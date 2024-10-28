@@ -3,7 +3,11 @@ module.exports = {
   content: ["index.html", "./src/**/*.rs"],
   darkMode: "class",
   theme: {
-    extend: {},
+    extend: {
+      scale: {
+        '101': '1.01'
+      }
+    },
   },
   plugins: [],
 };
