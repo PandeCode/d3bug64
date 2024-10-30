@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use yew::prelude::*;
 
 use crate::utils;
-use crate::utils::{gh_repo_url, language_color, svg_asset};
+use crate::utils::{gh_repo_url, language_color};
 
 // Define component properties
 #[derive(PartialEq, Properties)]
@@ -15,11 +15,7 @@ const ACC: &str = "pandecode";
 pub fn Home(props: &HomeProps) -> Html {
 	let HomeProps {} = props;
 
-	let description = html! {
-		<>
-			{"A developer with a knack for overcomplicating simple projects and a passion for hacking together quirky, sometimes unnecessary tools. Embraces challenges that transform mundane tasks into meticulously crafted systems. For example, this very page could've been a quick HTML mock-up, but instead, it's a full-blown Rust and WebAssembly experience."}
-		</>
-	};
+	let description = crate::data::get_description();
 
 	let _misc = [
 		"https://raw.githubusercontent.com/PandeCode/PandeCode/main/assets/bar_graph.png",
@@ -31,17 +27,9 @@ pub fn Home(props: &HomeProps) -> Html {
 		"https://raw.githubusercontent.com/PandeCode/PandeCode/refs/heads/main/README.md";
 
 	// Define skills with their corresponding SVG file paths
-	let skills = [
-		("Rust", svg_asset("rust")),
-		("C/C++", svg_asset("cpp")),
-		("Python", svg_asset("python")),
-		("Bash Scripting", svg_asset("bash")),
-		("Linux", svg_asset("linux")),
-		("Graphics", svg_asset("graphics")),
-		("Neovim", svg_asset("neovim")),
-		("Full-Stack Dev", svg_asset("web")),
-		("Git & Version Control", svg_asset("git")),
-	];
+	let skills = crate::data::get_skills();
+	let tools = crate::data::get_tools();
+	let langs = crate::data::get_langs();
 
 	// State for holding projects
 	let projects = use_state(|| {
@@ -184,17 +172,48 @@ pub fn Home(props: &HomeProps) -> Html {
 		}
 	});
 
-	let skills_cards = skills.iter().map(|(skill, icon)| {
-			html! {
-				<div class="flex flex-col items-center bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg transform hover:scale-105 transition duration-300 border border-gray-200 dark:border-gray-700">
-					<div class="relative mb-6">
-						<img src={icon.clone()} alt={*skill} class="w-20 h-20 mb-4 rounded-full shadow-lg transform transition-transform duration-200 hover:scale-110" />
-						<div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full opacity-25"></div>
-					</div>
-					<span class="text-xl font-semibold text-gray-700 dark:text-gray-300 text-center">{ skill }</span>
-				</div>
-			}
-		});
+	let langs_cards = 
+		langs.iter().map(|(lang, icon)| {
+    html! {
+        <div class="flex flex-row justify-between items-center bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg transform hover:scale-105 transition duration-300 border border-gray-200 dark:border-gray-700 w-full max-w-lg">
+            <span class="text-md font-medium text-gray-700 dark:text-gray-300">{ lang }</span>
+
+            <div class="relative ml-3 flex-shrink-0">
+                <img src={icon.clone()} alt={lang.clone()} class="w-12 h-12 rounded-full shadow-md transform transition-transform duration-200 hover:scale-110" />
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full opacity-25"></div>
+            </div>
+        </div>
+    }
+});
+	let tools_cards = 
+		tools.iter().map(|(tool, icon)| {
+    html! {
+        <div class="flex flex-row justify-between items-center bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg transform hover:scale-105 transition duration-300 border border-gray-200 dark:border-gray-700 w-full max-w-lg">
+            <span class="text-md font-medium text-gray-700 dark:text-gray-300">{ tool }</span>
+
+            <div class="relative ml-3 flex-shrink-0">
+                <img src={icon.clone()} alt={tool.clone()} class="w-12 h-12 rounded-full shadow-md transform transition-transform duration-200 hover:scale-110" />
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full opacity-25"></div>
+            </div>
+        </div>
+    }
+});
+
+	let skills_cards = 
+		skills.iter().map(|(skill, icon)| {
+    html! {
+        <div class="flex flex-row justify-between items-center bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg transform hover:scale-105 transition duration-300 border border-gray-200 dark:border-gray-700 w-full max-w-lg">
+            <span class="text-md font-medium text-gray-700 dark:text-gray-300">{ skill }</span>
+
+            <div class="relative ml-3 flex-shrink-0">
+                <img src={icon.clone()} alt={skill.clone()} class="w-12 h-12 rounded-full shadow-md transform transition-transform duration-200 hover:scale-110" />
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full opacity-25"></div>
+            </div>
+        </div>
+    }
+});
+
+
 
 	// Render component HTML with Tailwind styling and SVG icons
 	html! {
@@ -211,6 +230,20 @@ pub fn Home(props: &HomeProps) -> Html {
 			<h1 class="text-4xl font-bold mb-8 text-gray-800 dark:text-gray-100 text-center">{ "Skills" }</h1>
 			<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10 mb-12 max-w-10xl mx-auto">
 				{ for skills_cards }
+			</div>
+
+
+			// Langs Section
+			<h1 class="text-4xl font-bold mb-8 text-gray-800 dark:text-gray-100 text-center">{ "Langs" }</h1>
+			<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10 mb-12 max-w-10xl mx-auto">
+				{ for langs_cards }
+			</div>
+
+
+			// Tools Section
+			<h1 class="text-4xl font-bold mb-8 text-gray-800 dark:text-gray-100 text-center">{ "Tools" }</h1>
+			<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10 mb-12 max-w-10xl mx-auto">
+				{ for tools_cards }
 			</div>
 
 			// Projects Section

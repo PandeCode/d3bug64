@@ -2,6 +2,7 @@ mod components;
 mod router;
 mod theme;
 mod utils;
+mod data;
 
 use weblog::{
 	console_error, // ,console_log
@@ -16,7 +17,7 @@ fn app() -> Html {
 	use_effect(|| {
 		let res = theme::setup_theme();
 		if res.is_err() {
-			console_error!(res.err());
+			console_error!("Failed to load theme: ", res.err());
 		}
 	});
 
