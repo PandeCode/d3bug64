@@ -1,8 +1,8 @@
 mod components;
+mod data;
 mod router;
 mod theme;
 mod utils;
-mod data;
 
 use weblog::{
 	console_error, // ,console_log

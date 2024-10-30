@@ -1,4 +1,3 @@
-use weblog::console_log;
 use yew::prelude::*;
 use yew_router::prelude::*;
 

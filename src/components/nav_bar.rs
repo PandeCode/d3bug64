@@ -1,11 +1,7 @@
 use weblog::console_error;
 use yew::prelude::*;
-use yew_router::prelude::*;
 
-use crate::{
-	router::Route,
-	theme::{self, get_theme},
-};
+use crate::theme::{self, get_theme};
 
 use crate::utils::svg_asset;
 
