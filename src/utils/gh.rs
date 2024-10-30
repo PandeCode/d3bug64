@@ -8,7 +8,7 @@ use web_sys::js_sys::Date;
 const CACHE_EXPIRY_MS: f64 = 24.0 * 60.0 * 60.0 * 1000.0; // 1 day in milliseconds
 const CACHE_DELAY_MS: u64 = 60; // 1 day in milliseconds
 
-async fn request_get_cache(url: &str) -> Option<String> {
+pub async fn request_get_cache(url: &str) -> Option<String> {
 	if let Some(window) = web_sys::window() {
 		if let Ok(local_storage) = window.local_storage() {
 			if let Some(local_storage) = local_storage {
