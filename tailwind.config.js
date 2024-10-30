@@ -5,8 +5,8 @@ module.exports = {
   theme: {
     extend: {
       scale: {
-        '101': '1.01'
-      }
+        101: "1.01",
+      },
     },
   },
   plugins: [],
