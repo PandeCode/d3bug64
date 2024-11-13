@@ -5,9 +5,9 @@ use crate::utils::svg_asset;
 #[function_component]
 pub(crate) fn Description() -> Html {
 	html! {
-	<div class="parallax-container p-10 rounded-lg shadow-md mb-8 max-width text-center">
+	<div class="parallax-container p-10 rounded-lg shadow-md mb-8 max-width max-height">
 		<div class="parallax-bg"></div>
-		<div class="foreground-content">
+		<div class="foreground-content flex flex-col justify-between  ">
 			<h2 class="text-5xl font-bold text-blue-600 dark:text-blue-400">{ "Shawn Pande" }</h2>
 			<p class="text-gray-700 dark:text-gray-300 text-xl mt-4 leading-relaxed max-w-3xl mx-auto">
 				{ "A developer with a knack for overcomplicating simple projects and a passion for hacking together quirky, sometimes unnecessary tools. Embraces challenges that transform mundane tasks into meticulously crafted systems. For example, this very page could've been a quick HTML mock-up, but instead, it's a full-blown Rust and WebAssembly experience." }

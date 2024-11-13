@@ -9,6 +9,12 @@ pub struct HomeProps {}
 pub fn Home(props: &HomeProps) -> Html {
 	let HomeProps {} = props;
 
+	let nums = [
+		("25+", "full projects completed"),
+		("7+", "years of experirance"),
+		("20+", "projects lost to time"),
+	];
+
 	let _misc = [
 		"https://raw.githubusercontent.com/PandeCode/PandeCode/main/assets/bar_graph.png",
 		"https://github-readme-stats.vercel.app/api/top-langs/?username=PandeCode&layout=compact&theme=dracula&hide_border=true)](https://github.com/anuraghazra/github-readme-stats",
@@ -36,17 +42,16 @@ pub fn Home(props: &HomeProps) -> Html {
 
 	let section = |title, cards: Vec<(String, String)>| {
 		html! {<>
-			<h1 class="text-4xl font-bold mb-8 text-gray-800 dark:text-gray-100 text-center">{ title }</h1>
-			<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10 mb-12 max-w-10xl mx-auto">
+			<h1 class="text-l font-bold mb-8 text-gray-800 dark:text-gray-100 text-center">{ title }</h1>
+			<div class="flex  gap-10 mb-12 max-w-10xl mx-auto">
 				{ for cards.iter().map(|(text, icon)|  {
 					html! {
-						<div class="flex flex-row justify-between items-center bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg transform hover:scale-105 transition duration-300 border border-gray-200 dark:border-gray-700 w-full max-w-lg">
-							<span class="text-md font-medium text-gray-700 dark:text-gray-300">{ text.clone() }</span>
-
+						<div class="flex flex-col gap-1 items-center transform hover:scale-105 transition duration-300  w-full max-w-lg">
 							<div class="relative ml-3 flex-shrink-0">
-								<img src={icon.clone()} alt={text.clone()} class="w-12 h-12 rounded-full shadow-md transform transition-transform duration-200 hover:scale-110" />
-								<div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full opacity-25"></div>
+								<img src={icon.clone()} alt={text.clone()} class="w-12 h-12  transform transition-transform duration-200 hover:scale-110" />
 							</div>
+
+							<span class="text-md text-center font-medium text-gray-700 dark:text-gray-300">{ text.clone() }</span>
 						</div>
 					}
 				})}
@@ -57,16 +62,41 @@ pub fn Home(props: &HomeProps) -> Html {
 	// Render component HTML with Tailwind styling and SVG icons
 	html! {
 		<div class="flex flex-col items-center p-8 bg-gradient-to-r from-blue-100 to-purple-200 dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-900 min-h-screen">
-			<Description />
+			<div class="grid gap-10 grid-cols-1 lg:grid-cols-2 ">
+				<Description />
 
-			{ section("Skills", skills.0) }
-			{ section("Languages", skills.1) }
-			{ section("Tools", skills.2) }
+				<div class="flex flex-col items-center">
+					{ section("Languages", skills.1) }
+					{ section("Skills", skills.0) }
+					{ section("Tools", skills.2) }
+				</div>
+			</div>
 
+			<div class="flex  justify-around gap-10">
+				{ for nums.iter().map(|n| {
+					html!{
+						<div>
+							<h2 class="text-5xl font-bold text-blue-600 dark:text-blue-400">
+								{ n.0 } 
+							</h2>
+							<p class="text-gray-700 dark:text-gray-300 text-xl mt-4 leading-relaxed max-w-3xl mx-auto">
+								{ n.1 } 
+							</p>
+						</div>
+					}
+				}) }
+			</div>
 
 			<Projects />
 
-			<h1 class="text-4xl font-bold mb-8 text-gray-800 dark:text-gray-100 text-center">{ "Github Stats" }</h1>
+			// <h1 class="text-4xl font-bold mb-8 text-gray-800 dark:text-gray-100 text-center">{ "Github Stats" }</h1>
+
+			// <a href={"https://dotfyle.com/plugins/pandecode/nvim-config"}>
+			//     <img src={"https://dotfyle.com/plugins/pandecode/nvim-config/shield"} />
+			// </a>
+
+			// <div class="flex flex-row gap-10"> <img src={_misc[1]}/> <img src={_misc[2]}/> </div>
+			// <img class="w-full" src={_misc[0]}/>
 
 
 		</div>

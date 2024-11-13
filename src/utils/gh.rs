@@ -6,7 +6,7 @@ use gloo_timers::future::sleep;
 use web_sys::js_sys::Date;
 
 const CACHE_EXPIRY_MS: f64 = 24.0 * 60.0 * 60.0 * 1000.0; // 1 day in milliseconds
-const CACHE_DELAY_MS: u64 = 60; // 1 day in milliseconds
+const CACHE_DELAY_MS: u64 = 0; // To simulate loading, not necessay for now
 
 pub async fn request_get_cache(url: &str) -> Option<String> {
 	if let Some(window) = web_sys::window() {
@@ -23,6 +23,13 @@ pub async fn request_get_cache(url: &str) -> Option<String> {
 							let current_time = Date::now();
 							if current_time - timestamp < CACHE_EXPIRY_MS {
 								return Some(data.to_string());
+							} else {
+								// Remove the old data and proceed
+								if let Err(err) = local_storage.remove_item(url) {
+									weblog::console_warn!(
+										"Failed to remove old data from the cache"
+									);
+								}
 							}
 						}
 					}
@@ -62,10 +69,10 @@ pub async fn get_repos(account: String) -> Option<github_projects_obj::Root> {
 	}
 }
 
-pub async fn get_readme(repo: String, default_branch: String) -> Option<String> {
+pub async fn get_readme(account: &str, repo: &str, default_branch: &str) -> Option<String> {
 	let url = format!(
-		"https://raw.githubusercontent.com/{}/{}/README.md",
-		repo, default_branch
+		"https://raw.githubusercontent.com/{}/{}/{}/README.md",
+		account, repo, default_branch
 	);
 	request_get_cache(&url).await
 }
@@ -77,9 +84,7 @@ pub async fn get_langs(account: String, repo: String) -> Option<HashMap<String, 
 	);
 
 	if let Some(data) = request_get_cache(&url).await {
-		// Parse JSON as a map from language names to byte counts
 		let languages: HashMap<String, u64> = serde_json::from_str(&data).ok()?;
-		// Return the language bytes map
 		Some(languages)
 	} else {
 		None
@@ -88,21 +93,14 @@ pub async fn get_langs(account: String, repo: String) -> Option<HashMap<String, 
 
 pub async fn get_topics(account: &str, repo: &str) -> Option<Vec<String>> {
 	let url = format!("https://api.github.com/repos/{}/{}/topics", account, repo);
+	let data = request_get_cache(&url).await?;
+	let topics: serde_json::Value = serde_json::from_str(&data).ok()?;
+	let names_array = topics.get("names")?.as_array()?;
 
-	if let Some(data) = request_get_cache(&url).await {
-		// Parse JSON as a map containing the "names" field
-		let topics: serde_json::Value = serde_json::from_str(&data).ok()?;
-		// Extract topics as a vector of strings
-		if let Some(names) = topics.get("names") {
-			if let Some(names_array) = names.as_array() {
-				return Some(
-					names_array
-						.iter()
-						.filter_map(|n| n.as_str().map(|s| s.to_string()))
-						.collect(),
-				);
-			}
-		}
-	}
-	None
+	Some(
+		names_array
+			.iter()
+			.filter_map(|n| n.as_str().map(|s| s.to_string()))
+			.collect(),
+	)
 }

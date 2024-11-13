@@ -6,12 +6,9 @@ use crate::utils;
 use crate::data::ACC;
 use crate::utils::{gh_repo_url, language_color};
 
-#[derive(PartialEq, Properties)]
-pub struct ProjectsProps {}
 
 #[function_component]
-pub fn Projects(props: &ProjectsProps) -> Html {
-	let ProjectsProps {} = props;
+pub fn Projects() -> Html {
 
 	let wait_html = html! {
 		<div class="flex gap-2">
@@ -30,13 +27,14 @@ pub fn Projects(props: &ProjectsProps) -> Html {
 			Option<HashMap<String, u64>>,
 		)>::new()
 	});
+
 	let projects_loading = use_state(|| true);
 
 	{
 		let projects = projects.clone();
 		let projects_loading = projects_loading.clone();
 
-		use_effect(move || {
+		use_effect_with((), move |_| {
 			let projects = projects.clone();
 			let projects_loading = projects_loading.clone();
 
