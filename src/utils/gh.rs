@@ -1,5 +1,7 @@
 use std::{collections::HashMap, time::Duration};
 
+use crate::data::ACC;
+
 use super::github_projects_obj;
 use gloo_net::http::Request;
 use gloo_timers::future::sleep;
@@ -68,13 +70,25 @@ pub async fn get_repos(account: String) -> Option<github_projects_obj::Root> {
 		None
 	}
 }
+pub async fn get_blog_files() -> Option<github_projects_obj::Root> {
+	let url = format!("https://api.github.com/users/{}/repos", ACC);
+	if let Some(data) = request_get_cache(&url).await {
+		serde_json::from_str(&data).ok()
+	} else {
+		None
+	}
+}
 
-pub async fn get_readme(account: &str, repo: &str, default_branch: &str) -> Option<String> {
+pub async fn get_repo_file(account: &str, repo: &str, default_branch: &str, filename: &str) -> Option<String> {
 	let url = format!(
-		"https://raw.githubusercontent.com/{}/{}/{}/README.md",
-		account, repo, default_branch
+		"https://raw.githubusercontent.com/{}/{}/{}/{}",
+		account, repo, default_branch, filename
 	);
 	request_get_cache(&url).await
+}
+
+pub async fn get_readme(account: &str, repo: &str, default_branch: &str) -> Option<String> {
+	get_repo_file(account, repo, default_branch, "README.md").await
 }
 
 pub async fn get_langs(account: String, repo: String) -> Option<HashMap<String, u64>> {

@@ -6,10 +6,8 @@ use crate::utils;
 use crate::data::ACC;
 use crate::utils::{gh_repo_url, language_color};
 
-
 #[function_component]
 pub fn Projects() -> Html {
-
 	let wait_html = html! {
 		<div class="flex gap-2">
 			{ for (0..3).map(|_| html! {
@@ -43,6 +41,7 @@ pub fn Projects() -> Html {
 					projects.set(
 						repos
 							.iter()
+							//.filter(|repo| repo.topics.contains(&("display-on-site".to_owned())))
 							.map(|repo| {
 								(
 									repo.name.clone(),
@@ -153,7 +152,7 @@ pub fn Projects() -> Html {
 	});
 
 	html! {
-		<>
+		<div class="p-8 bg-gradient-to-r from-blue-100 to-purple-200 dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-900 min-h-screen">
 			<h2 class="text-2xl font-bold mt-10 mb-4 text-gray-800 dark:text-gray-100">{ "Projects" }</h2>
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
 				{
@@ -178,6 +177,6 @@ pub fn Projects() -> Html {
 					}
 				}
 			</div>
-		</>
+		</div>
 	}
 }

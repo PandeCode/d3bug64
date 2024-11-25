@@ -22,10 +22,10 @@ fn app() -> Html {
 	});
 
 	html! {
-		<BrowserRouter>
+		<HashRouter>
 			<NavBar />
 			<Switch<router::Route> render={router::switch} />
-		</BrowserRouter>
+		</HashRouter>
 	}
 }
 fn main() {

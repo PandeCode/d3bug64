@@ -26,7 +26,7 @@ jobs:
                   chmod +x tailwindcss
 
             - name: Build
-              run: PATH=$PWD:$PATH trunk build --release --verbose
+              run: PATH=$PWD:$PATH trunk build --release --minify --verbose
 
             - name: Push generated webpage to another repository
               run: |

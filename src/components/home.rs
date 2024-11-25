@@ -1,6 +1,6 @@
 use yew::prelude::*;
 
-use crate::{components::projects::Projects, data::Description, utils::gh::request_get_cache};
+use crate::{data::Description, utils::gh::request_get_cache};
 
 #[derive(PartialEq, Properties)]
 pub struct HomeProps {}
@@ -41,28 +41,27 @@ pub fn Home(props: &HomeProps) -> Html {
 	let skills = crate::data::get_skills();
 
 	let section = |title, cards: Vec<(String, String)>| {
-		html! {<>
-			<h1 class="text-l font-bold mb-8 text-gray-800 dark:text-gray-100 text-center">{ title }</h1>
-			<div class="flex  gap-10 mb-12 max-w-10xl mx-auto">
+		html! {
+			<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 lg:gap-10 mb-12 max-w-10xl mx-auto w-full">
 				{ for cards.iter().map(|(text, icon)|  {
 					html! {
-						<div class="flex flex-col gap-1 items-center transform hover:scale-105 transition duration-300  w-full max-w-lg">
-							<div class="relative ml-3 flex-shrink-0">
-								<img src={icon.clone()} alt={text.clone()} class="w-12 h-12  transform transition-transform duration-200 hover:scale-110" />
+						<div class="flex flex-col gap-1 items-center transform hover:scale-105 transition duration-300 w-full">
+							<div class="relative flex-shrink-0">
+								<img src={icon.clone()} alt={text.clone()} class="w-10 sm:w-12 md:w-14 lg:w-16 h-10 sm:h-12 md:h-14 lg:h-16 transform transition-transform duration-200 hover:scale-110" />
 							</div>
 
-							<span class="text-md text-center font-medium text-gray-700 dark:text-gray-300">{ text.clone() }</span>
+							<span class="text-sm sm:text-md md:text-lg lg:text-xl text-center font-medium text-gray-700 dark:text-gray-300">{ text.clone() }</span>
 						</div>
 					}
 				})}
 			</div>
-		</>}
+		}
 	};
 
 	// Render component HTML with Tailwind styling and SVG icons
 	html! {
-		<div class="flex flex-col items-center p-8 bg-gradient-to-r from-blue-100 to-purple-200 dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-900 min-h-screen">
-			<div class="grid gap-10 grid-cols-1 lg:grid-cols-2 ">
+		<div class="flex flex-col items-center p-4 sm:p-6 md:p-8 bg-gradient-to-r from-blue-100 to-purple-200 dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-900 min-h-screen w-full">
+			<div class="grid gap-6 sm:gap-8 md:gap-10 grid-cols-1 lg:grid-cols-2">
 				<Description />
 
 				<div class="flex flex-col items-center">
@@ -72,22 +71,20 @@ pub fn Home(props: &HomeProps) -> Html {
 				</div>
 			</div>
 
-			<div class="flex  justify-around gap-10">
+			<div class="flex flex-col sm:flex-row justify-around gap-6 sm:gap-8 md:gap-10">
 				{ for nums.iter().map(|n| {
 					html!{
 						<div>
-							<h2 class="text-5xl font-bold text-blue-600 dark:text-blue-400">
-								{ n.0 } 
+							<h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-blue-600 dark:text-blue-400">
+								{ n.0 }
 							</h2>
-							<p class="text-gray-700 dark:text-gray-300 text-xl mt-4 leading-relaxed max-w-3xl mx-auto">
-								{ n.1 } 
+							<p class="text-gray-700 dark:text-gray-300 text-lg sm:text-xl mt-2 sm:mt-4 leading-relaxed max-w-3xl mx-auto">
+								{ n.1 }
 							</p>
 						</div>
 					}
 				}) }
 			</div>
-
-			<Projects />
 
 			// <h1 class="text-4xl font-bold mb-8 text-gray-800 dark:text-gray-100 text-center">{ "Github Stats" }</h1>
 

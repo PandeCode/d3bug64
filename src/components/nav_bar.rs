@@ -1,3 +1,4 @@
+use crate::router::Route;
 use weblog::console_error;
 use yew::prelude::*;
 
@@ -12,18 +13,16 @@ pub struct NavBarProps {}
 pub fn nav_bar(props: &NavBarProps) -> Html {
 	let NavBarProps {} = props;
 
-	/*
 	// Route Handling
-	let navigator = use_navigator().unwrap();
+	let navigator = yew_router::prelude::use_navigator().unwrap();
 	let create_route_callback = |route| {
 		let navigator = navigator.clone();
 		move |_| navigator.push(route)
 	};
-	let onclick_home = create_route_callback(&Route::Home);
-	let onclick_articles = create_route_callback(&Route::Articles);
+
 	let onclick_projects = create_route_callback(&Route::Projects);
-	let onclick_about = create_route_callback(&Route::About);
-	*/
+	let onclick_home = create_route_callback(&Route::Home);
+	let onclick_blogs = create_route_callback(&Route::Blog);
 
 	// Small screen dropdown handling
 	let show_dropdown = use_state(|| true);
@@ -57,11 +56,23 @@ pub fn nav_bar(props: &NavBarProps) -> Html {
 		}
 	});
 
+	macro_rules! get_btn_class {
+		($route:expr) => {
+			match navigator.basename() {
+				Some(n) => match n {
+					$route => "nav-btn-active",
+					_ => "nav-btn",
+				},
+				None => "nav-btn",
+			}
+		};
+	}
+
 	html! {
 		<nav class="bg-white border-gray-200 dark:bg-gray-900">
 			<div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-				<a href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
-					<img src="assets/favicon-32x32.png" class="h-8" alt="d3bug64 logo" />
+				<a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
+					<img src="/assets/favicon-32x32.png" class="h-8" alt="d3bug64 logo" />
 					<span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
 						{ "d3bug64" }
 					</span>
@@ -97,58 +108,43 @@ pub fn nav_bar(props: &NavBarProps) -> Html {
 					<ul
 						class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700"
 					>
-						/*
-	<li>
-		<a
-			href="#"
-			onclick={onclick_home}
-			class={if navigator.basename() == Some("/") {"nav-btn-active"} else {"nav-btn"}}
-			aria-current="page"
-		>
-			{ "Home" }
-		</a>
-	</li>
-	<li>
-		<a
-			href="#"
-			onclick={onclick_projects}
-			class={if navigator.basename() == Some("/projects") {"nav-btn-active"} else {"nav-btn"}}
-		>
-			{ "Projects" }
-		</a>
-	</li>
-	<li>
-		<a
-			href="#"
-			onclick={onclick_articles}
-			class={if navigator.basename() == Some("/articles") {"nav-btn-active"} else {"nav-btn"}}
-		>
-			{ "Articles" }
-		</a>
-	</li>
-	<li>
-		<a
-			href="#"
-			onclick={onclick_about}
-			class={if navigator.basename() == Some("/about") {"nav-btn-active"} else {"nav-btn"}}
-		>
-			{ "About" }
-		</a>
-	</li>
-	*/
+						<li>
+							<a
+								href="#"
+								onclick={onclick_home}
+								class={get_btn_class!("/")}
+								aria-current="page"
+							>
+								{ "Home" }
+							</a>
+						</li>
+						<li>
+							<a
+								href="#"
+								onclick={onclick_projects}
+								class={get_btn_class!("/projects")}
+							>
+								{ "Projects" }
+							</a>
+						</li>
+							  <li>
+							<a
+								href="#"
+								onclick={onclick_blogs}
+								class={get_btn_class!("/blog")}
+							>
+								{ "Blog" }
+							</a>
+						</li>
 						<li>
 							<a href="https://ug.linkedin.com/in/shawn-pande-45a79b19b" class="nav-btn">
-
-
-						<img src={svg_asset("linkedin")} alt={ "LinkedIn"} class="w-7 h-7 mb-4 rounded-full shadow-lg transform transition-transform duration-200 hover:scale-110" />
+								<img src={svg_asset("linkedin")} alt={ "LinkedIn"} class="w-7 h-7 mb-4 rounded-full shadow-lg transform transition-transform duration-200 hover:scale-110" />
 							</a>
 						</li>
 						<li>
 							<a href="https://github.com/PandeCode/" class="nav-btn">
-
-						<img src={svg_asset("github")} alt={"Github"} class="w-7 h-7 mb-4 rounded-full shadow-lg transform transition-transform duration-200 hover:scale-110" />
-	</a>
-
+								<img src={svg_asset("github")} alt={"Github"} class="w-7 h-7 mb-4 rounded-full shadow-lg transform transition-transform duration-200 hover:scale-110" />
+							</a>
 						</li>
 						<li>
 							<button

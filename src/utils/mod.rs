@@ -1,4 +1,6 @@
 pub(crate) mod gh;
+pub(crate) mod safe_html;
+pub(crate) mod gh_blog;
 pub(crate) mod github_projects_obj;
 
 pub fn set_href(url: String) -> Result<(), wasm_bindgen::JsValue> {
@@ -38,5 +40,5 @@ pub fn language_color(lang: &str) -> &'static str {
 }
 
 pub fn svg_asset(f: &str) -> String {
-	format!("assets/svgs/{}.svg", f)
+	format!("/assets/svgs/{}.svg", f)
 }
